@@ -1,0 +1,53 @@
+import pandas as pd
+import re
+
+# Load dataset with text fields (e.g., customer reviews)
+data = {'review_id': [1, 2, 3, 4, 5],
+        'review': [
+            "   The product was excellent. Highly recommend!   ",
+            "Product arrived on time, but packaging was damaged.",
+            "Not satisfied! Wouldn't buy again.",
+            "    Excellent quality, quick delivery, great customer service.   ",
+            "Very bad experience. The food was cold and delivery was late."
+        ]}
+
+# Creating DataFrame
+df = pd.DataFrame(data)
+print("Original Dataset:")
+print(df.head())
+
+# Task 1: Trimming leading and trailing whitespaces
+print("\nTrimming leading and trailing whitespaces...")
+df['review'] = df['review'].str.strip()
+print(df.head())
+
+# Task 2: Replacing multiple whitespaces with a single space
+print("\nReplacing multiple whitespaces with a single space...")
+df['review'] = df['review'].str.replace('\s+', ' ', regex=True)
+print(df.head())
+
+# Task 3: Replacing specific words
+print("\nReplacing 'bad' with 'poor' and 'excellent' with 'superb'...")
+df['review'] = df['review'].str.replace('bad', 'poor').str.replace('excellent', 'superb')
+print(df.head())
+
+# Task 4: Extracting a substring (first 10 characters)
+print("\nExtracting the first 10 characters of each review...")
+df['review_first10'] = df['review'].str[:10]
+print(df[['review', 'review_first10']])
+
+# Task 5: Applying regular expressions to clean or extract information
+print("\nRemoving special characters and numbers from the text...")
+df['cleaned_review'] = df['review'].apply(lambda x: re.sub('[^a-zA-Z\s]', '', x))
+print(df[['review', 'cleaned_review']])
+
+print("\nExtracting email addresses (if any) from the text...")
+df['email'] = df['review'].apply(lambda x: re.findall(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', x))
+print(df[['review', 'email']])
+
+print("\nExtracting URLs (if any) from the text...")
+df['url'] = df['review'].apply(lambda x: re.findall(r'http[s]?://\S+', x))
+print(df[['review', 'url']])
+
+print("\nFinal Processed Dataset:")
+print(df.head())
